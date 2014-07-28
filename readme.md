@@ -55,3 +55,13 @@ You can setup multiple blogs, by specifying multiple entries, labeling each with
 
 See [sample-post.md](https://raw.githubusercontent.com/mkaz/wpgo/master/sample-post.md) for format. It is similar in style to Jekyll or other static-site tools by specifying post details in the front matter. You can specify title, date, category, and tags.
 
+
+## Contributors
+
+You? Pull requests welcome.
+
+
+## License
+
+[GNU General Public License, version 2](http://www.gnu.org/licenses/gpl-2.0.html)
+
