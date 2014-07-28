@@ -5,7 +5,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/mkaz/fetcher"
 	"github.com/postfix/goconf"
 	"log"
 	"os"
@@ -121,11 +120,11 @@ func parse_args() (blog, cmd, param string) {
 	return blog, cmd, param
 }
 
-func get_api_fetcher(endpoint string) (f fetcher.Fetcher, url string) {
+func get_api_fetcher(endpoint string) (f Fetcher, url string) {
 	apiurl := "https://public-api.wordpress.com/rest/v1"
 	url = strings.Join([]string{apiurl, "sites", blog_id, endpoint}, "/")
 
-	f = fetcher.NewFetcher()
+	f = NewFetcher()
 	f.Header["Authorization"] = "Bearer " + token
 	return f, url
 }
