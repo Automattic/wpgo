@@ -5,7 +5,7 @@ Command-line tool to interact with WordPress blogs. You can read, publish and ad
 
 ## Setup
 
-Works with WordPress.com and self-hosted blogs running [Jetpack](https://jetpack.me/). If running Jetpack plugin, if running Jetpack it requires the JSON API to be enabled, which should be activated by default.
+Works with WordPress.com and self-hosted blogs running [Jetpack](https://jetpack.me/). If running Jetpack it requires the JSON API to be enabled, which should be activated by default.
 
 You need to configure with an authorization token and blog id for each of your blogs. To do so, you can authorize using this site, which looks totally sketchy but it is run by a good guy, trust me: https://rest-access.test.apokalyptik.com/
 
