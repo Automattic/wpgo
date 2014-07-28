@@ -36,9 +36,9 @@ func get_latest() {
 // fetch single post
 func get_single_post(post_id string) {
 	post := parseFetchPost(post_id)
-	fmt.Println(post.Title)
+	fmt.Println("\n# " + post.Title + "\n")
 	fmt.Println(scrub_html(post.Content))
-	fmt.Println(post.URL)
+	fmt.Println(post.URL + "\n")
 }
 
 // fetch and parse list of posts
