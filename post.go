@@ -25,13 +25,13 @@ func do_post(filename string) {
 	page := readParseFile(filename)
 
 	f, url := get_api_fetcher("posts/new")
-	f.Params["title"] = page.Title
-	f.Params["date"] = page.Date.Format(time.RFC3339)
-	f.Params["content"] = page.Content
-	f.Params["status"] = page.Status
-	f.Params["categories"] = page.Category
-	f.Params["publicize"] = "0"
-	f.Params["tags"] = page.Tags
+	f.Params.Add("title", page.Title)
+	f.Params.Add("date", page.Date.Format(time.RFC3339))
+	f.Params.Add("content", page.Content)
+	f.Params.Add("status", page.Status)
+	f.Params.Add("categories", page.Category)
+	f.Params.Add("publicize", "0")
+	f.Params.Add("tags", page.Tags)
 
 	result, err := f.Fetch(url, "POST")
 	if err != nil {

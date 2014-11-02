@@ -5,6 +5,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/mkaz/fetcher"
 	"github.com/postfix/goconf"
 	"log"
 	"os"
@@ -75,7 +76,7 @@ func main() {
 		do_post(param)
 
 	case "stats":
-		get_stats()
+		get_stats(param)
 
 	case "upload":
 		if param == "" {
@@ -120,11 +121,11 @@ func parse_args() (blog, cmd, param string) {
 	return blog, cmd, param
 }
 
-func get_api_fetcher(endpoint string) (f Fetcher, url string) {
+func get_api_fetcher(endpoint string) (f fetcher.Fetcher, url string) {
 	apiurl := "https://public-api.wordpress.com/rest/v1"
 	url = strings.Join([]string{apiurl, "sites", blog_id, endpoint}, "/")
 
-	f = NewFetcher()
+	f = fetcher.NewFetcher()
 	f.Header["Authorization"] = "Bearer " + token
 	return f, url
 }
