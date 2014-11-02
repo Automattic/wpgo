@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"time"
 )
 
 type StatResult struct {
@@ -17,8 +18,8 @@ type StatResult struct {
 }
 
 type StreakResult struct {
-	Count	int			`json:"found"`
-	Posts	[]Page		`json:"posts"`
+	Count int    `json:"found"`
+	Posts []Page `json:"posts"`
 }
 
 type TopPostsResult struct {
@@ -63,22 +64,35 @@ func getSummary() {
 // This returns JSON data with a day timestamp and number of posts for that day.
 // This format works with cal-heatmap library
 func getStreakData() {
-	// fetch posts after Jan 2014 (limit 100)
-	// after: DATE
-	// number: 100
-	// fields: ID,title,date
-	f, url := get_api_fetcher("posts")
-	f.Params.Add("after", "2014-01-01")
-	f.Params.Add("number", "100")
-	f.Params.Add("fields", "date")
-	result, err := f.Fetch(url, "GET")
-	if err != nil {
-		log.Fatalln(">>Error Fetching: ", err)
-	}
+	startDate := time.Date(2014, 1, 1, 0, 0, 0, 0, time.UTC)
 
-	var s StreakResult
-	if err := json.Unmarshal([]byte(result), &s); err != nil {
-		log.Fatalln("Error parsing:", err)
+	var postLists []Page
+	for i := 0; i < 10; i++ { // limit to 1,000 posts
+		f, url := get_api_fetcher("posts")
+		f.Params.Add("after", startDate.Format("2006-01-02"))
+		f.Params.Add("number", "100")
+		f.Params.Add("fields", "date")
+		f.Params.Add("order_by", "date")
+		f.Params.Add("order", "ASC")
+		result, err := f.Fetch(url, "GET")
+		if err != nil {
+			log.Fatalln(">>Error Fetching: ", err)
+		}
+		var s StreakResult
+		if err := json.Unmarshal([]byte(result), &s); err != nil {
+			log.Fatalln("Error parsing:", err)
+		}
+
+		postLists = append(postLists, s.Posts...)
+		if s.Count < 100 {
+			break
+		}
+		// get date from last post
+		for _, t := range s.Posts {
+			if t.Date.Unix() > startDate.Unix()+10 {
+				startDate = t.Date
+			}
+		}
 	}
 
 	// TODO if found == 100, need to query again
@@ -86,7 +100,7 @@ func getStreakData() {
 	// TODO if multiple posts on single day, count
 	// encode as real JSON
 	jsmap := make(map[string]int)
-	for _, p := range s.Posts {
+	for _, p := range postLists {
 		ds := fmt.Sprintf("%v", p.Date.Unix())
 		jsmap[ds] = 1
 	}
