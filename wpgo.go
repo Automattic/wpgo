@@ -5,12 +5,13 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/mkaz/fetcher"
-	"github.com/postfix/goconf"
 	"log"
 	"os"
 	"os/user"
 	"strings"
+
+	"github.com/automattic/go/jaguar"
+	"github.com/postfix/goconf"
 )
 
 var c *goconf.ConfigFile
@@ -121,13 +122,14 @@ func parse_args() (blog, cmd, param string) {
 	return blog, cmd, param
 }
 
-func get_api_fetcher(endpoint string) (f fetcher.Fetcher, url string) {
+func getApiFetcher(endpoint string) (j jaguar.Jaguar) {
 	apiurl := "https://public-api.wordpress.com/rest/v1"
-	url = strings.Join([]string{apiurl, "sites", blog_id, endpoint}, "/")
+	url := strings.Join([]string{apiurl, "sites", blog_id, endpoint}, "/")
 
-	f = fetcher.NewFetcher()
-	f.Header["Authorization"] = "Bearer " + token
-	return f, url
+	j = jaguar.New()
+	j.Header.Add("Authorization", "Bearer "+token)
+	j.Url(url)
+	return j
 }
 
 func elemExists(s string, a []string) bool {

@@ -68,18 +68,18 @@ func getStreakData() {
 
 	var postLists []Page
 	for i := 0; i < 10; i++ { // limit to 1,000 posts
-		f, url := get_api_fetcher("posts")
-		f.Params.Add("after", startDate.Format("2006-01-02"))
-		f.Params.Add("number", "100")
-		f.Params.Add("fields", "date")
-		f.Params.Add("order_by", "date")
-		f.Params.Add("order", "ASC")
-		result, err := f.Fetch(url, "GET")
+		j := getApiFetcher("posts")
+		j.Params.Add("after", startDate.Format("2006-01-02"))
+		j.Params.Add("number", "100")
+		j.Params.Add("fields", "date")
+		j.Params.Add("order_by", "date")
+		j.Params.Add("order", "ASC")
+		resp, err := j.Send()
 		if err != nil {
 			log.Fatalln(">>Error Fetching: ", err)
 		}
 		var s StreakResult
-		if err := json.Unmarshal([]byte(result), &s); err != nil {
+		if err := json.Unmarshal(resp.Bytes, &s); err != nil {
 			log.Fatalln("Error parsing:", err)
 		}
 
@@ -114,13 +114,13 @@ func getStreakData() {
 
 func parseFetchStats() (s StatResult) {
 
-	f, url := get_api_fetcher("stats")
-	result, err := f.Fetch(url, "GET")
+	j := getApiFetcher("stats")
+	resp, err := j.Send()
 	if err != nil {
 		log.Fatalln(">>Error: ", err)
 	}
 
-	if err := json.Unmarshal([]byte(result), &s); err != nil {
+	if err := json.Unmarshal(resp.Bytes, &s); err != nil {
 		log.Fatal("Error parsing:", err)
 	}
 
@@ -128,13 +128,13 @@ func parseFetchStats() (s StatResult) {
 }
 
 func parseFetchTopPosts(limit int) (tp TopPostsResult) {
-	f, url := get_api_fetcher("stats/top-posts")
-	result, err := f.Fetch(url, "GET")
+	j := getApiFetcher("stats/top-posts")
+	resp, err := j.Send()
 	if err != nil {
 		log.Fatalln(">>Error: ", err)
 	}
 
-	if err := json.Unmarshal([]byte(result), &tp); err != nil {
+	if err := json.Unmarshal(resp.Bytes, &tp); err != nil {
 		log.Fatal("Error parsing:", err)
 	}
 

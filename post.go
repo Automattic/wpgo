@@ -7,8 +7,6 @@ import (
 	"log"
 	"strings"
 	"time"
-
-
 )
 
 // struct for file be reading, create a new post
@@ -18,27 +16,26 @@ type Page struct {
 	Date                                   time.Time
 }
 
-
 // create new post
 func do_post(filename string) {
 
 	page := readParseFile(filename)
 
-	f, url := get_api_fetcher("posts/new")
-	f.Params.Add("title", page.Title)
-	f.Params.Add("date", page.Date.Format(time.RFC3339))
-	f.Params.Add("content", page.Content)
-	f.Params.Add("status", page.Status)
-	f.Params.Add("categories", page.Category)
-	f.Params.Add("publicize", "0")
-	f.Params.Add("tags", page.Tags)
+	j := getApiFetcher("posts/new")
+	j.Params.Add("title", page.Title)
+	j.Params.Add("date", page.Date.Format(time.RFC3339))
+	j.Params.Add("content", page.Content)
+	j.Params.Add("status", page.Status)
+	j.Params.Add("categories", page.Category)
+	j.Params.Add("publicize", "0")
+	j.Params.Add("tags", page.Tags)
 
-	result, err := f.Fetch(url, "POST")
+	resp, err := j.Method("POST").Send()
 	if err != nil {
 		log.Fatalln(">>Error: ", err)
 	}
 
-	newurl := parseNewPostResponse(result)
+	newurl := parseNewPostResponse(resp.Bytes)
 	fmt.Println("New Post:", newurl)
 }
 
@@ -103,16 +100,13 @@ func readParseFile(filename string) (page Page) {
 }
 
 // extract URL from json response data of new post
-func parseNewPostResponse(data string) string {
-	type Resp struct {
-		URL string
-	}
+func parseNewPostResponse(data []byte) string {
 
-	var resp Resp
+	var rs struct{ Url string }
 
-	if err := json.Unmarshal([]byte(data), &resp); err != nil {
+	if err := json.Unmarshal(data, &rs); err != nil {
 		log.Fatalf("Error parsing: {} \n\n {}", data, err)
 	}
 
-	return resp.URL
+	return rs.Url
 }

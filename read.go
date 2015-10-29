@@ -25,7 +25,6 @@ type Posts struct {
 	Posts []Post `json:"posts"`
 }
 
-
 func get_latest() {
 	posts := parseFetchPosts()
 	for _, post := range posts {
@@ -42,15 +41,15 @@ func get_single_post(post_id string) {
 }
 
 // fetch and parse list of posts
-func parseFetchPosts() ([]Post) {
-	f, url := get_api_fetcher("posts/")
-	result, err := f.Fetch(url, "GET")
+func parseFetchPosts() []Post {
+	j := getApiFetcher("posts/")
+	resp, err := j.Send()
 	if err != nil {
 		log.Fatalln(">>Error: ", err)
 	}
 
 	var h Posts
-	if err := json.Unmarshal([]byte(result), &h); err != nil {
+	if err := json.Unmarshal(resp.Bytes, &h); err != nil {
 		log.Fatal("Error parsing:", err)
 	}
 
@@ -59,13 +58,13 @@ func parseFetchPosts() ([]Post) {
 
 // parse single post
 func parseFetchPost(post_id string) (p Post) {
-	f, url := get_api_fetcher("posts/" + post_id)
-	result, err := f.Fetch(url, "GET")
+	j := getApiFetcher("posts/" + post_id)
+	resp, err := j.Send()
 	if err != nil {
 		log.Fatalln(">>Error: ", err)
 	}
 
-	if err := json.Unmarshal([]byte(result), &p); err != nil {
+	if err := json.Unmarshal(resp.Bytes, &p); err != nil {
 		log.Fatal("Error parsing:", err)
 	}
 	return p
