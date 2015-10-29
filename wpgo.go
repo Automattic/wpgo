@@ -86,7 +86,9 @@ func main() {
 		upload_media(param)
 
 	default:
-		usage()
+		fmt.Printf("Unknown command '%s' \n", cmd)
+		fmt.Println("Valid commands are: read, post, stats, upload ")
+		os.Exit(1)
 	}
 
 }
